@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OakERP.Api/OakERP.Api.csproj" />
+    <Project Path="src/OakERP.Domain/OakERP.Domain.csproj" />
+    <Project Path="src/OakERP.Infrastructure/OakERP.Infrastructure.csproj" />
+  </Folder>
+</Solution>
