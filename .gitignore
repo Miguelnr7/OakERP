@@ -1,0 +1,28 @@
+# Secretos y entorno
+.env
+.env.*
+!.env.example
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+*.log
+
+# Node / frontend
+node_modules/
+dist/
+build/
+coverage/
+.vite/
+
+# Editores y sistema
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
