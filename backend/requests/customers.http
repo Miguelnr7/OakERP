@@ -1,0 +1,87 @@
+@baseUrl = http://localhost:5274
+
+###############################################################
+# 1) CREAR un cliente (esperado: 201 Created)
+###############################################################
+# @name createCustomer
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Acme S.L.",
+  "taxId": "B12345678",
+  "email": "info@acme.test"
+}
+
+###
+# Guarda el id del cliente recién creado para usarlo en las pruebas siguientes.
+@customerId = {{createCustomer.response.body.id}}
+
+###############################################################
+# 2) LISTAR todos (esperado: 200 y una lista JSON)
+###############################################################
+GET {{baseUrl}}/api/customers
+
+###############################################################
+# 3) OBTENER uno por id (esperado: 200)
+###############################################################
+GET {{baseUrl}}/api/customers/{{customerId}}
+
+###############################################################
+# 4) ACTUALIZAR (esperado: 204 sin cuerpo)
+#    Después vuelve a ejecutar el bloque 3 para ver los datos nuevos.
+###############################################################
+PUT {{baseUrl}}/api/customers/{{customerId}}
+Content-Type: application/json
+
+{
+  "name": "Acme Solutions S.L.",
+  "taxId": "B12345678",
+  "email": "contacto@acme.test"
+}
+
+###############################################################
+# 5) CASOS DE ERROR
+###############################################################
+
+### 5a) Crear con datos inválidos: nombre vacío y correo mal formado (esperado: 400)
+POST {{baseUrl}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "esto-no-es-un-correo"
+}
+
+### 5b) Actualizar con datos inválidos (esperado: 400)
+PUT {{baseUrl}}/api/customers/{{customerId}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "tampoco-es-un-correo"
+}
+
+### 5c) Obtener un id que no existe (esperado: 404)
+GET {{baseUrl}}/api/customers/00000000-0000-0000-0000-000000000000
+
+### 5d) Actualizar un id que no existe (esperado: 404)
+PUT {{baseUrl}}/api/customers/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "name": "No existe",
+  "taxId": null,
+  "email": null
+}
+
+### 5e) Id con formato no válido (esperado: 404, no coincide con la ruta ":guid")
+GET {{baseUrl}}/api/customers/abc
+
+###############################################################
+# 6) BORRAR (esperado: 204). Déjalo para el final.
+###############################################################
+DELETE {{baseUrl}}/api/customers/{{customerId}}
+
+### 6b) Comprobar que ya no existe (esperado: 404)
+GET {{baseUrl}}/api/customers/{{customerId}}
