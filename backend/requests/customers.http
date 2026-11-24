@@ -1,8 +1,8 @@
 @baseUrl = http://localhost:5274
 
-###############################################################
+
 # 1) CREAR un cliente (esperado: 201 Created)
-###############################################################
+
 # @name createCustomer
 POST {{baseUrl}}/api/customers
 Content-Type: application/json
@@ -29,7 +29,6 @@ GET {{baseUrl}}/api/customers/{{customerId}}
 
 ###############################################################
 # 4) ACTUALIZAR (esperado: 204 sin cuerpo)
-#    Después vuelve a ejecutar el bloque 3 para ver los datos nuevos.
 ###############################################################
 PUT {{baseUrl}}/api/customers/{{customerId}}
 Content-Type: application/json
@@ -78,8 +77,14 @@ Content-Type: application/json
 ### 5e) Id con formato no válido (esperado: 404, no coincide con la ruta ":guid")
 GET {{baseUrl}}/api/customers/abc
 
+### Provocar un error 500 (esperado: JSON ProblemDetails, no texto plano)
+GET {{baseUrl}}/api/health/boom
+
+### Ruta inexistente (esperado: 404 en formato ProblemDetails)
+GET {{baseUrl}}/api/esto-no-existe
+
 ###############################################################
-# 6) BORRAR (esperado: 204). Déjalo para el final.
+# 6) BORRAR (esperado: 204). 
 ###############################################################
 DELETE {{baseUrl}}/api/customers/{{customerId}}
 
