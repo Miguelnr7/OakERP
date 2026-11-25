@@ -4,4 +4,7 @@
     <Project Path="src/OakERP.Domain/OakERP.Domain.csproj" />
     <Project Path="src/OakERP.Infrastructure/OakERP.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OakERP.Api.Tests/OakERP.Api.Tests.csproj" />
+  </Folder>
 </Solution>
