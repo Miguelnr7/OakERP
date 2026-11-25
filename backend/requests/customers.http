@@ -83,6 +83,21 @@ GET {{baseUrl}}/api/health/boom
 ### Ruta inexistente (esperado: 404 en formato ProblemDetails)
 GET {{baseUrl}}/api/esto-no-existe
 
+### Listado paginado (esperado: 200 con items, page, pageSize, totalCount y totalPages)
+GET {{baseUrl}}/api/customers?page=1&pageSize=2
+
+### Segunda página
+GET {{baseUrl}}/api/customers?page=2&pageSize=2
+
+### Búsqueda por nombre, sin distinguir mayúsculas
+GET {{baseUrl}}/api/customers?search=ACME
+
+### Tamaño de página inválido (esperado: 400)
+GET {{baseUrl}}/api/customers?pageSize=1000
+
+### Página inválida (esperado: 400)
+GET {{baseUrl}}/api/customers?page=0
+
 ###############################################################
 # 6) BORRAR (esperado: 204). 
 ###############################################################

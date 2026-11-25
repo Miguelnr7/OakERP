@@ -5,6 +5,8 @@ using Microsoft.VisualBasic;
 using OakERP.Api.Contracts.Customers;
 using OakERP.Domain.Customers;
 using OakERP.Infrastructure.Persistence;
+using System.ComponentModel.DataAnnotations;
+using OakERP.Api.Contracts;
 
 namespace OakERP.Api.Controllers;
 
@@ -14,13 +16,35 @@ namespace OakERP.Api.Controllers;
 public class CustomersController(OakErpDbContext db) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<CustomerResponse>>> GetAll(CancellationToken ct)
+   public async Task<ActionResult<PagedResponse<CustomerResponse>>>GetAll(
+    [FromQuery] string? search,
+    [FromQuery, Range(1, int.MaxValue)] int page = 1,
+    [FromQuery, Range(1, 100)] int pageSize = 20,
+    CancellationToken ct = default)
     {
-        var customer = await db.Customers
-            .AsNoTracking()
+        var query = db.Customers.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var pattern = $"%{search.Trim()}%";
+
+            query = query.Where(c =>
+            EF.Functions.ILike(c.Name, pattern) ||
+            (c.TaxId != null && EF.Functions.ILike(c.TaxId, pattern)));
+        }
+
+        var TotalCount = await query.CountAsync(ct);
+
+        var items = await query
             .OrderBy(c => c.Name)
+            .ThenBy(c => c.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(ct);
-        return Ok(customer.Select(c => c.ToResponse()).ToList());
+        return Ok(new PagedResponse<CustomerResponse>(
+            items.Select(c => c.ToResponse()).ToList(),
+            page,
+            pageSize,
+            TotalCount));
     }
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CustomerResponse>> GetById(Guid id, CancellationToken ct)
